@@ -1,9 +1,16 @@
-# Contributing
+# Contributing to the Tweepypoll python package
+This outlines how to propose a change to the Tweepypoll python package  
 
 Contributions are welcome, and they are greatly appreciated! Every little bit
-helps, and credit will always be given.
+helps, and credit will always be given. If you notice a bug, or have a feature request, please open an issue.
+If you'd like to contribute, you can create a local branch and submit a pull request. Our code maintainers team will review pull requests within 7 days.
+
 
 ## Types of Contributions
+
+### Prerequisites
+
+If you are conducting contribution on large scale, please file an issue and make sure the core code maintainance team agrees that the recommended fix is a problem before you make a substantial pull request.
 
 ### Report Bugs
 
@@ -70,4 +77,4 @@ Before you submit a pull request, check that it meets these guidelines:
 ## Code of Conduct
 
 Please note that the `tweepypoll` project is released with a 
-Code of Conduct. By contributing to this project you agree to abide by its terms.
+[Code of Conduct](https://github.com/UBC-MDS/tweepypoll/blob/main/CONDUCT.md). By contributing to this project you agree to abide by its terms.
