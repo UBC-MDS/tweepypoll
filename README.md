@@ -2,6 +2,12 @@
 
 Collect and visualize twitter poll data.
 
+## Contributors
+
+- Wenxin Xiang
+- Rada Rudyak
+- Linh Giang Nguyen 
+
 ## Installation
 
 ```bash
