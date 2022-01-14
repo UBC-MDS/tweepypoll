@@ -1,6 +1,8 @@
 # tweepypoll
 
-Collect and visualize twitter poll data.
+`tweepypoll` is a Python package that allows users to extract and visualize poll data (poll questions, poll options, poll responses, etc.) from Twitter. Our goal is to make `tweepypoll` helpful and user-friendly; any Python beginner can effectively gain access to the data and make their own data-driven decisions. 
+
+There are a few existing Python packages that have similar functionality for tweets from Twitter. For example, `pytweet` is a package that helps extract tweets, visualize user habit on tweet posting, and apply sentiment analysis to the data. However, there are no available packages that work specifically on polls from Twitter. 
 
 ## Installation
 
