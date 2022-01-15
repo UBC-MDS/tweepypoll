@@ -48,15 +48,15 @@ def get_polls_from_user(user_id, num=5):
     
     '''
 
-def visualize_poll(poll_id, show_user=False, show_duration=False, show_date=False):
+def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
     '''
     Returns a simple bar chart of poll responses
     Option to include additional information in the text box
 
     Parameters
     ----------
-    poll_id : str
-        id of the twitter poll to visualize
+    poll_obj : dictionary
+        the output of get_poll_by_id() function
     show_user : bool
         option to display user handle in the textbox
         default = False
