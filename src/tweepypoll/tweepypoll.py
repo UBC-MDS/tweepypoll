@@ -2,6 +2,7 @@
 # date: 2022-01-14
 
 import altair as alt
+import pandas as pd
 
 def get_poll_by_id(poll_id):
     '''
@@ -48,7 +49,7 @@ def get_polls_from_user(user_id, num=5):
     
     '''
 
-def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
+def visualize_poll(poll_obj, show_duration=False, show_date=False, show_total_responses=False):
     '''
     Returns a simple bar chart of poll responses
     Option to include additional information in the text box
@@ -57,21 +58,20 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
     ----------
     poll_obj : dictionary
         the output of get_poll_by_id() function
-    show_user : bool
-        option to display user handle in the textbox
-        default = False
     show_duration : bool
-        option to display poll duration in the textbox
+        option to display poll duration
         default = False
     show_date : bool
-        option to display date in the textbox
+        option to display date
+        default = False
+    show_total_responses : bool
+        option to display total responses in the poll
         default = False
 
     Returns
     --------
         an altair bar chart for the poll responses
         includes a textbox with additional information if at least one of 
-        - show_user
         - show_duration
         - show_date
         was set to True
@@ -81,3 +81,46 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
     >>> visualize_poll('4235234', show_duration=True)
 
     '''
+    # Check for valid inputs
+    if not isinstance(poll_obj, dict):
+        raise Exception("The type of the argument 'poll_obj' mush be a dictionary")
+    if show_duration != True or False:
+        raise Exception("The value of the argument 'show_duration' must be True or False")
+    if show_date != True or False:
+        raise Exception("The value of the argument 'show_date' must be True or False")
+    
+    # convert dictionary to pd.DataFrame
+    df = pd.DataFrame(poll_obj["poll options"])
+    
+    # extract poll date and save as a string of length 1
+    if show_date == True: 
+        print(f"The end date and time of the poll: {pd.Timestamp(poll_obj['date']).strftime('%Y-%m-%d %H:%M:%S')}") # len()=1
+    
+    # extract duration and save as a string of length 1
+    if show_duration == True:
+        print(f"The duration of poll in hours: {poll_obj['duration'] / 60:.1f}h")
+    
+    # show total responses
+    if show_total_responses == True:
+        print(f"The total response of the poll: {df['votes'].sum()}")
+    
+    plot = alt.Chart(
+        df, 
+        title=alt.TitleParams(
+            text=poll_obj['poll question'],
+            anchor="start"
+        )).mark_bar().encode(
+        alt.Y('label', title=''),
+        alt.X('votes', title='Votes'),
+        alt.Color('label',title='Options'),
+        alt.Tooltip('votes')
+    ).configure_axis(
+        labelFontSize=15,
+        titleFontSize=15,
+    ).configure_title(fontSize=20
+                     ).properties(
+        height=200, width=400
+    )
+    
+    return plot
+    
