@@ -2,6 +2,7 @@
 # date: 2022-01-14
 
 import altair as alt
+import tweepy
 
 def get_poll_by_id(poll_id):
     '''
@@ -25,6 +26,19 @@ def get_poll_by_id(poll_id):
     --------
     >>> get_poll_by_id('4235234')
     '''
+    print("Test")
+        # Twitter API credentials
+    try:
+        consumer_key = os.environ.get('TWITTER_CONS_KEY')
+        consumer_secret = os.environ.get('TWITTER_CONS_SEC')
+        access_key = os.environ.get('TWITTER_ACCS_KEY')
+        access_secret = os.environ.get('TWITTER_ACCS_SEC')
+    except KeyError:
+        raise Exception('Need authentication tokens! Please make sure you have those as environment variables.')
+
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_key, access_secret)
+    api = tweepy.API(auth)
 
 def get_polls_from_user(user_id, num=5):
     '''
