@@ -8,21 +8,21 @@ import tweepy
 import os
 import re
 
-def get_poll_by_id(poll_id):
+def get_poll_by_id(tweet_id):
     '''
     Extracts poll data from Twitter given the poll ID
 
     Parameters
     ----------
-    poll_id : str
-        id of the twitter poll
+    tweet_id : str
+        id of the tweet containing twitter poll
     
     Returns
     --------
     a dictionary with the following keys:
         poll question,
-        poll options,
-        total responses,
+        poll responses,
+        total votes,
         duration,
         date    
     
@@ -30,27 +30,50 @@ def get_poll_by_id(poll_id):
     --------
     >>> get_poll_by_id('4235234')
     '''
-    print("Test")
-        # Twitter API credentials
-    try:
-        consumer_key = os.environ.get('TWITTER_CONS_KEY')
-        consumer_secret = os.environ.get('TWITTER_CONS_SEC')
-        access_key = os.environ.get('TWITTER_ACCS_KEY')
-        access_secret = os.environ.get('TWITTER_ACCS_SEC')
-    except KeyError:
-        raise Exception('Need authentication tokens! Please make sure you have those as environment variables.')
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_key, access_secret)
-    api = tweepy.API(auth)
+    if not(isinstance(tweet_id, int)):
+        raise TypeError('Invalid argument type: poll id must be numeric string.')
 
-def get_polls_from_user(username, num=5):
-    '''
+   # Twitter API credentials
+    from dotenv import load_dotenv
+    load_dotenv()
+    bearer_token = os.environ.get("BEARER_TOKEN")
+    #bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
+    
+    client = tweepy.Client(bearer_token=bearer_token)
+
+    res_tweet = client.get_tweets(tweet_id, expansions=["attachments.poll_ids", "author_id"], poll_fields=["duration_minutes","end_datetime"])
+    res = res_tweet.includes
+
+    poll = res['polls'][0]
+    duration = poll['duration_minutes']
+    date = poll['end_datetime']
+    options = poll['options']
+    text = res_tweet.data[0]['text']
+    user = res['users'][0].username
+
+    total = 0
+    for opt in options:
+        total = total + opt['votes']
+
+    rtn = {
+        "text" : text,
+        "duration" : duration,
+        "date" : date,
+        "poll options" : options,
+        "user" : user,
+        "total" : total
+    }
+
+    return rtn
+
+def get_polls_from_user(username, tweet_num=5):
+     '''
     Get list of poll ids for a given Twitter user
     Parameters
     ----------
-    username : str
-        username of the twitter user
+    user_id : str
+        id of the twitter user
     num : int
         number of polls to return, in desc chronological order
         default = 5
@@ -62,48 +85,6 @@ def get_polls_from_user(username, num=5):
     >>> get_polls_from_user('ChipotleTweets', 3)
     
     '''
-    
-    # check argument validity
-    if not(isinstance(username, str)):
-        raise TypeError('Invalid argument type: username must be a string.')
-    elif not(isinstance(num, int)):
-        raise TypeError('Invalid argument: input n_tweets must be >= 0.')
-
-    # Twitter API credentials
-    try:
-        consumer_key = '4tuMyUqRb6oTR99QSqp32KR3V'
-        consumer_secret = 'O4GgyHAMsIE70YxbUBQ0pizV4gnL8JVek8Jy2LeYK4h908bUX2'
-        access_key = '1483563822497492993-8NIPFIRy0AlHdn35iBrCUcg5EW56nU'
-        access_secret = '9o3Tgy7sUt2mEa37wTKnUSj8xBC7TRUYtX8RCq4R9FFOX'
-    except KeyError:
-        raise Exception('Need authentication tokens! Please make sure you have those as environment variables.')
-
-    auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
-    Client = tweepy.Client(auth)
-    #auth.set_access_token(access_key, access_secret)
-    #Client = tweepy.Client(consumer_key, consumer_secret)
-
-    # get first batch of tweets
-    tweets = []
-    latest = Client.get_users_tweets(id=username)
-    tweets.extend(latest)
-        
-    # request recursively to get all tweets
-    oldest = latest[-1].id
-    while(len(latest) > 0 and len(tweets) < num):
-        latest = Client.get_users_tweets(id=username,
-                                   max_results=10)
-        tweets.extend(latest)
-        
-        oldest = latest[-1].id # TODO: error out sometimes
-        
-    # format output dataframe   
-    # output = pd.DataFrame([[tweet.created_at, tweet.text] for tweet in tweets],
-    #                      columns=['time', 'tweet'])
-    # output = output[:num]
-    output = tweets
-
-    return output
 
 
 def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
