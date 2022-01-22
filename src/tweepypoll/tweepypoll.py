@@ -31,7 +31,7 @@ def get_poll_by_id(poll_id):
     >>> get_poll_by_id('4235234')
     '''
 
-def get_polls_from_user(username):
+def get_polls_from_user(username, tweet_num = 10):
     '''
     Get list of poll ids for a given Twitter user
 
@@ -39,7 +39,11 @@ def get_polls_from_user(username):
     ----------
     username : str
         username of the twitter user
-
+    tweet_num: int
+        number of the most recent tweets to be 
+        default = 10
+        maximum = 100, minimum = 5 per request by Twitter API
+        
     Returns
     --------
         array of twitter ids
@@ -53,11 +57,14 @@ def get_polls_from_user(username):
     # Check argument validity
     if not(isinstance(username, str)):
         raise TypeError('Invalid argument type: username must be a string.')
+    elif not(isinstance(tweet_num, int) and tweet_num >= 5 and tweet_num <= 100):
+        raise TypeError('Invalid argument: input tweet_num must be >= 5 and <= 100.')
 
     # Twitter API credentials
-    #bearer_token = os.environ.get("BEARER_TOKEN")
-    #client = tweepy.Client(bearer_token)
-    client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAOcOYQEAAAAArkXS3vK8LeepFyFpQEnoXoFheTg%3Dx86kO3cGNAt0jnap6njmh2cMJoBTjUXMlkrfIUDuW6YlvXWaf8')  
+    from dotenv import load_dotenv
+    load_dotenv()
+    bearer_token = os.environ.get("BEARER_TOKEN")
+    client = tweepy.Client(bearer_token)
     
     # Get user_id from username
     users = client.get_users(usernames=username, user_fields=['id'])
@@ -67,7 +74,7 @@ def get_polls_from_user(username):
 
     # Get tweets specified by the requested user ID
     tweets = client.get_users_tweets(id=user_id, 
-                                     max_results=100, # return maximum the most recent 100 tweets per request
+                                     max_results=tweet_num,
                                      expansions="attachments.poll_ids")
 
     # Get poll_ids from tweets if available
@@ -82,6 +89,12 @@ def get_polls_from_user(username):
             pass  
     
     return poll_ids
+
+get_polls_from_user('PollzOnTwitta')
+
+a=abc
+a
+
 
 def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
     '''
