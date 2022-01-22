@@ -84,10 +84,6 @@ def visualize_poll(poll_obj, show_duration=False, show_date=False, show_total_re
     # Check for valid inputs
     if not isinstance(poll_obj, dict):
         raise Exception("The type of the argument 'poll_obj' mush be a dictionary")
-    if show_duration != True or False:
-        raise Exception("The value of the argument 'show_duration' must be True or False")
-    if show_date != True or False:
-        raise Exception("The value of the argument 'show_date' must be True or False")
     
     # convert dictionary to pd.DataFrame
     df = pd.DataFrame(poll_obj["poll options"])
