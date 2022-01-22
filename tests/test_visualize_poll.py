@@ -38,7 +38,7 @@ def test_visualize_poll():
     ), "Option should be the legend title"
 
     # check if show_user=True, correct user name is printed
-    assert (sample_poll_obj["user"] == "GregShahade", "The user name is not correct.")
+    assert sample_poll_obj["user"] == "GregShahade", "The user name is not correct."
 
     # check if show_date=True, correct date and time is printed
     assert (
