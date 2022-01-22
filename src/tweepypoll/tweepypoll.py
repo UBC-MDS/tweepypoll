@@ -72,7 +72,7 @@ def get_poll_by_id(tweet_id):
     return rtn
 
 def get_polls_from_user(username, tweet_num=5):
-     '''
+    '''
     Get list of poll ids for a given Twitter user
     Parameters
     ----------
@@ -89,9 +89,8 @@ def get_polls_from_user(username, tweet_num=5):
     Examples
     --------
     >>> get_polls_from_user('PollzOnTwitta')
-    
     '''
-    
+
     # Check argument validity
     if not(isinstance(username, str)):
         raise TypeError('Invalid argument type: username must be a string.')
