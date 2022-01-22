@@ -35,15 +35,20 @@ def get_poll_by_id(tweet_id):
         raise TypeError('Invalid argument type: poll id must be numeric string.')
 
    # Twitter API credentials
-    from dotenv import load_dotenv
-    load_dotenv()
-    bearer_token = os.environ.get("BEARER_TOKEN")
-    #bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
+    #from dotenv import load_dotenv
+    #load_dotenv()
+    #bearer_token = os.environ.get("BEARER_TOKEN")
+    bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
     
     client = tweepy.Client(bearer_token=bearer_token)
 
     res_tweet = client.get_tweets(tweet_id, expansions=["attachments.poll_ids", "author_id"], poll_fields=["duration_minutes","end_datetime"])
     res = res_tweet.includes
+
+    try:
+        res['polls'][0]
+    except KeyError:
+         raise TypeError('Provided tweet does not contain a poll!')
 
     poll = res['polls'][0]
     duration = poll['duration_minutes']
