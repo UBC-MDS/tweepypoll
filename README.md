@@ -27,7 +27,25 @@ $ pip install tweepypoll
 
 ## Usage
 
-- TODO
+```bash
+from tweepypoll.tweepypoll import get_poll_by_id
+get_poll_by_id(tweet_id)
+```
+**tweet_id** is numeric, such as 1481040318325739523
+
+
+```bash
+from tweepypoll.tweepypoll import get_polls_from_user
+get_polls_from_user('user_id')
+```
+where **user_is** is a string username, such as 'tacobell'
+
+
+```bash
+from tweepypoll.tweepypoll import visualize_poll
+visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False)
+```
+**poll_obj** is a dict outputted by get_poll_by_id(), **show_user, show_duration, show_date** are optional booleans to display username, poll duration and poll end date, respectively
 
 ## Contributors
 
