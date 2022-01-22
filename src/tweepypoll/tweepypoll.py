@@ -50,7 +50,7 @@ def get_polls_from_user(username, tweet_num = 10):
 
     Examples
     --------
-    >>> get_polls_from_user('ChipotleTweets')
+    >>> get_polls_from_user('PollzOnTwitta')
     
     '''
     
@@ -64,7 +64,7 @@ def get_polls_from_user(username, tweet_num = 10):
     from dotenv import load_dotenv
     load_dotenv()
     bearer_token = os.environ.get("BEARER_TOKEN")
-    client = tweepy.Client(bearer_token)
+    client = tweepy.Client(bearer_token=bearer_token)
     
     # Get user_id from username
     users = client.get_users(usernames=username, user_fields=['id'])
@@ -89,12 +89,6 @@ def get_polls_from_user(username, tweet_num = 10):
             pass  
     
     return poll_ids
-
-get_polls_from_user('PollzOnTwitta')
-
-a=abc
-a
-
 
 def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
     '''
