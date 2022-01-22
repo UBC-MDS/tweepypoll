@@ -1,28 +1,28 @@
 # author: Rada Rudyak, Wenxin Xiang, Linh Giang Nguyen
 # date: 2022-01-14
 
+import altair as alt
+import pandas as pd
+import numpy as np
 import tweepy
 import os
-import pandas as pd
-import altair as alt
 import re
-import numpy as np
 
-def get_poll_by_id(poll_id):
+def get_poll_by_id(tweet_id):
     '''
     Extracts poll data from Twitter given the poll ID
 
     Parameters
     ----------
-    poll_id : str
-        id of the twitter poll
+    tweet_id : str
+        id of the tweet containing twitter poll
     
     Returns
     --------
     a dictionary with the following keys:
         poll question,
-        poll options,
-        total responses,
+        poll responses,
+        total votes,
         duration,
         date    
     
@@ -31,10 +31,49 @@ def get_poll_by_id(poll_id):
     >>> get_poll_by_id('4235234')
     '''
 
-def get_polls_from_user(username, tweet_num = 10):
-    '''
-    Get list of poll ids for a given Twitter user
+    if not(isinstance(tweet_id, int)):
+        raise TypeError('Invalid argument type: poll id must be numeric string.')
 
+   # Twitter API credentials
+    from dotenv import load_dotenv
+    load_dotenv()
+    bearer_token = os.environ.get("BEARER_TOKEN")
+    
+    client = tweepy.Client(bearer_token=bearer_token)
+
+    res_tweet = client.get_tweets(tweet_id, expansions=["attachments.poll_ids", "author_id"], poll_fields=["duration_minutes","end_datetime"])
+    res = res_tweet.includes
+
+    try:
+        res['polls'][0]
+    except KeyError:
+         raise TypeError('Provided tweet does not contain a poll!')
+
+    poll = res['polls'][0]
+    duration = poll['duration_minutes']
+    date = poll['end_datetime']
+    options = poll['options']
+    text = res_tweet.data[0]['text']
+    user = res['users'][0].username
+
+    total = 0
+    for opt in options:
+        total = total + opt['votes']
+
+    rtn = {
+        "text" : text,
+        "duration" : duration,
+        "date" : date,
+        "poll options" : options,
+        "user" : user,
+        "total" : total
+    }
+
+    return rtn
+
+def get_polls_from_user(username, tweet_num=5):
+     '''
+    Get list of poll ids for a given Twitter user
     Parameters
     ----------
     username : str
@@ -47,7 +86,6 @@ def get_polls_from_user(username, tweet_num = 10):
     Returns
     --------
         array of twitter ids
-
     Examples
     --------
     >>> get_polls_from_user('PollzOnTwitta')
@@ -90,6 +128,7 @@ def get_polls_from_user(username, tweet_num = 10):
     
     return poll_ids
 
+
 def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
     '''
     Returns a simple bar chart of poll responses
@@ -103,16 +142,16 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
         option to display user handle in the textbox
         default = False
     show_duration : bool
-        option to display poll duration in the textbox
+        option to display poll duration
         default = False
     show_date : bool
-        option to display date in the textbox
+        option to display date
         default = False
 
     Returns
     --------
         an altair bar chart for the poll responses
-        includes a textbox with additional information if at least one of 
+        includes a textbox with additional information if at least one of
         - show_user
         - show_duration
         - show_date
@@ -123,3 +162,41 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
     >>> visualize_poll('4235234', show_duration=True)
 
     '''
+    # Check for valid inputs
+    if not isinstance(poll_obj, dict):
+        raise Exception("The type of the argument 'poll_obj' mush be a dictionary")
+    
+    # convert dictionary to pd.DataFrame
+    df = pd.DataFrame(poll_obj["poll options"])
+    
+    # extract user id and print
+    if show_user == True:
+        print(f"The user of the poll: {poll_obj['user']}")
+    
+    # extract poll date and print
+    if show_date == True: 
+        print(f"The end date and time of the poll: {pd.Timestamp(poll_obj['date']).strftime('%Y-%m-%d %H:%M:%S')}") # len()=1
+    
+    # extract duration and print
+    if show_duration == True:
+        print(f"The duration of the poll in hours: {poll_obj['duration'] / 60:.1f}h")
+    
+    plot = alt.Chart(
+        df, 
+        title=alt.TitleParams(
+            text=poll_obj['text'],
+            anchor="start"
+        )).mark_bar().encode(
+        alt.Y('label', title='', sort='x'),
+        alt.X('votes', title='Votes'),
+        alt.Color('label',title='Options'),
+        alt.Tooltip('votes')
+    ).configure_axis(
+        labelFontSize=15,
+        titleFontSize=15,
+    ).configure_title(fontSize=20
+                     ).properties(
+        height=200, width=400
+    )
+    
+    return plot
