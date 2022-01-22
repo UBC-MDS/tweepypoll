@@ -104,16 +104,16 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
         option to display user handle in the textbox
         default = False
     show_duration : bool
-        option to display poll duration in the textbox
+        option to display poll duration
         default = False
     show_date : bool
-        option to display date in the textbox
+        option to display date
         default = False
 
     Returns
     --------
         an altair bar chart for the poll responses
-        includes a textbox with additional information if at least one of 
+        includes a textbox with additional information if at least one of
         - show_user
         - show_duration
         - show_date
@@ -124,3 +124,41 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
     >>> visualize_poll('4235234', show_duration=True)
 
     '''
+    # Check for valid inputs
+    if not isinstance(poll_obj, dict):
+        raise Exception("The type of the argument 'poll_obj' mush be a dictionary")
+    
+    # convert dictionary to pd.DataFrame
+    df = pd.DataFrame(poll_obj["poll options"])
+    
+    # extract user id and print
+    if show_user == True:
+        print(f"The user of the poll: {poll_obj['user']}")
+    
+    # extract poll date and print
+    if show_date == True: 
+        print(f"The end date and time of the poll: {pd.Timestamp(poll_obj['date']).strftime('%Y-%m-%d %H:%M:%S')}") # len()=1
+    
+    # extract duration and print
+    if show_duration == True:
+        print(f"The duration of the poll in hours: {poll_obj['duration'] / 60:.1f}h")
+    
+    plot = alt.Chart(
+        df, 
+        title=alt.TitleParams(
+            text=poll_obj['text'],
+            anchor="start"
+        )).mark_bar().encode(
+        alt.Y('label', title='', sort='x'),
+        alt.X('votes', title='Votes'),
+        alt.Color('label',title='Options'),
+        alt.Tooltip('votes')
+    ).configure_axis(
+        labelFontSize=15,
+        titleFontSize=15,
+    ).configure_title(fontSize=20
+                     ).properties(
+        height=200, width=400
+    )
+    
+    return plot
