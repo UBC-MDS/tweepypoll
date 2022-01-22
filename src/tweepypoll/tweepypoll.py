@@ -76,19 +76,57 @@ def get_polls_from_user(username, tweet_num=5):
     Get list of poll ids for a given Twitter user
     Parameters
     ----------
-    user_id : str
-        id of the twitter user
-    num : int
-        number of polls to return, in desc chronological order
-        default = 5
+    username : str
+        username of the twitter user
+    tweet_num: int
+        number of the most recent tweets to be 
+        default = 10
+        maximum = 100, minimum = 5 per request by Twitter API
+        
     Returns
     --------
         array of twitter ids
     Examples
     --------
-    >>> get_polls_from_user('ChipotleTweets', 3)
+    >>> get_polls_from_user('PollzOnTwitta')
     
     '''
+    
+    # Check argument validity
+    if not(isinstance(username, str)):
+        raise TypeError('Invalid argument type: username must be a string.')
+    elif not(isinstance(tweet_num, int) and tweet_num >= 5 and tweet_num <= 100):
+        raise TypeError('Invalid argument: input tweet_num must be >= 5 and <= 100.')
+
+    # Twitter API credentials
+    from dotenv import load_dotenv
+    load_dotenv()
+    bearer_token = os.environ.get("BEARER_TOKEN")
+    client = tweepy.Client(bearer_token=bearer_token)
+    
+    # Get user_id from username
+    users = client.get_users(usernames=username, user_fields=['id'])
+
+    for user in users.data:  
+        user_id = user.id
+
+    # Get tweets specified by the requested user ID
+    tweets = client.get_users_tweets(id=user_id, 
+                                     max_results=tweet_num,
+                                     expansions="attachments.poll_ids")
+
+    # Get poll_ids from tweets if available
+    poll_ids = []
+
+    for tweet in tweets.data:
+        if "attachments" in tweet.data.keys():
+            attachments = tweet.data['attachments']
+            poll_id = attachments['poll_ids']
+            poll_ids.append(poll_id)
+        else:
+            pass  
+    
+    return poll_ids
 
 
 def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
