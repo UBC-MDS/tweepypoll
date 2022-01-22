@@ -35,10 +35,9 @@ def get_poll_by_id(tweet_id):
         raise TypeError('Invalid argument type: poll id must be numeric string.')
 
    # Twitter API credentials
-    #from dotenv import load_dotenv
-    #load_dotenv()
-    #bearer_token = os.environ.get("BEARER_TOKEN")
-    bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
+    from dotenv import load_dotenv
+    load_dotenv()
+    bearer_token = os.environ.get("BEARER_TOKEN")
     
     client = tweepy.Client(bearer_token=bearer_token)
 
