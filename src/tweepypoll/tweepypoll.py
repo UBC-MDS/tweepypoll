@@ -49,7 +49,7 @@ def get_polls_from_user(user_id, num=5):
     
     '''
 
-def visualize_poll(poll_obj, show_duration=False, show_date=False, show_total_responses=False):
+def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
     '''
     Returns a simple bar chart of poll responses
     Option to include additional information in the text box
@@ -58,20 +58,21 @@ def visualize_poll(poll_obj, show_duration=False, show_date=False, show_total_re
     ----------
     poll_obj : dictionary
         the output of get_poll_by_id() function
+    show_user : bool
+        option to display user handle in the textbox
+        default = False
     show_duration : bool
         option to display poll duration
         default = False
     show_date : bool
         option to display date
         default = False
-    show_total_responses : bool
-        option to display total responses in the poll
-        default = False
 
     Returns
     --------
         an altair bar chart for the poll responses
-        includes a textbox with additional information if at least one of 
+        includes a textbox with additional information if at least one of
+        - show_user
         - show_duration
         - show_date
         was set to True
@@ -88,25 +89,25 @@ def visualize_poll(poll_obj, show_duration=False, show_date=False, show_total_re
     # convert dictionary to pd.DataFrame
     df = pd.DataFrame(poll_obj["poll options"])
     
-    # extract poll date and save as a string of length 1
+    # extract user id and print
+    if show_user == True:
+        print(f"The user of the poll: {poll_obj['user']}")
+    
+    # extract poll date and print
     if show_date == True: 
         print(f"The end date and time of the poll: {pd.Timestamp(poll_obj['date']).strftime('%Y-%m-%d %H:%M:%S')}") # len()=1
     
-    # extract duration and save as a string of length 1
+    # extract duration and print
     if show_duration == True:
-        print(f"The duration of poll in hours: {poll_obj['duration'] / 60:.1f}h")
-    
-    # show total responses
-    if show_total_responses == True:
-        print(f"The total response of the poll: {df['votes'].sum()}")
+        print(f"The duration of the poll in hours: {poll_obj['duration'] / 60:.1f}h")
     
     plot = alt.Chart(
         df, 
         title=alt.TitleParams(
-            text=poll_obj['poll question'],
+            text=poll_obj['text'],
             anchor="start"
         )).mark_bar().encode(
-        alt.Y('label', title=''),
+        alt.Y('label', title='', sort='x'),
         alt.X('votes', title='Votes'),
         alt.Color('label',title='Options'),
         alt.Tooltip('votes')
@@ -119,4 +120,3 @@ def visualize_poll(poll_obj, show_duration=False, show_date=False, show_total_re
     )
     
     return plot
-    
