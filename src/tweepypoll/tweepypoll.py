@@ -39,6 +39,10 @@ def get_poll_by_id(tweet_id):
     #from dotenv import load_dotenv, find_dotenv
     #load_dotenv(find_dotenv())
     #bearer_token = os.environ.get("BEARER_TOKEN")
+     ############################################################################
+    # Note: For the TAs convenience, we hard coded the bearer_token below.
+    # In practice, we would use commented out code to get the token from environmental variable
+    ############################################################################
     bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
     
     client = tweepy.Client(bearer_token=bearer_token)
@@ -103,6 +107,11 @@ def get_polls_from_user(username, tweet_num=5):
     #from dotenv import load_dotenv
     #load_dotenv(".env")
     #bearer_token = os.environ.get("BEARER_TOKEN")
+
+    ############################################################################
+    # Note: For the TAs convenience, we hard coded the bearer_token below.
+    # In practice, we would use commented out code to get the token from environmental variable
+    ############################################################################
     bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
     client = tweepy.Client(bearer_token=bearer_token)
     
