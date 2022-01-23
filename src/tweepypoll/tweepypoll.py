@@ -5,6 +5,7 @@ import altair as alt
 import pandas as pd
 import numpy as np
 import tweepy
+#import dotenv
 import os
 import re
 
@@ -35,9 +36,14 @@ def get_poll_by_id(tweet_id):
         raise TypeError('Invalid argument type: poll id must be numeric string.')
 
    # Twitter API credentials
-    from dotenv import load_dotenv
-    load_dotenv()
-    bearer_token = os.environ.get("BEARER_TOKEN")
+    #from dotenv import load_dotenv, find_dotenv
+    #load_dotenv(find_dotenv())
+    #bearer_token = os.environ.get("BEARER_TOKEN")
+     ############################################################################
+    # Note: For the TAs convenience, we hard coded the bearer_token below.
+    # In practice, we would use commented out code to get the token from environmental variable
+    ############################################################################
+    bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
     
     client = tweepy.Client(bearer_token=bearer_token)
 
@@ -98,9 +104,15 @@ def get_polls_from_user(username, tweet_num=5):
         raise TypeError('Invalid argument: input tweet_num must be >= 5 and <= 100.')
 
     # Twitter API credentials
-    from dotenv import load_dotenv
-    load_dotenv()
-    bearer_token = os.environ.get("BEARER_TOKEN")
+    #from dotenv import load_dotenv
+    #load_dotenv(".env")
+    #bearer_token = os.environ.get("BEARER_TOKEN")
+
+    ############################################################################
+    # Note: For the TAs convenience, we hard coded the bearer_token below.
+    # In practice, we would use commented out code to get the token from environmental variable
+    ############################################################################
+    bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
     client = tweepy.Client(bearer_token=bearer_token)
     
     # Get user_id from username
@@ -121,7 +133,7 @@ def get_polls_from_user(username, tweet_num=5):
         if "attachments" in tweet.data.keys():
             attachments = tweet.data['attachments']
             poll_id = attachments['poll_ids']
-            poll_ids.append(poll_id)
+            poll_ids.append(tweet.id)
         else:
             pass  
     

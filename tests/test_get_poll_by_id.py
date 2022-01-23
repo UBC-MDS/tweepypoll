@@ -1,4 +1,5 @@
 from tweepypoll.tweepypoll import get_poll_by_id
+import pytest
 
 def test_get_poll_by_id():
     """Test that function returns a dictionary"""
