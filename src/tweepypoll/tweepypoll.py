@@ -77,7 +77,7 @@ def get_poll_by_id(tweet_id):
 
     return rtn
 
-def get_polls_from_user(username, tweet_num=5):
+def get_polls_from_user(username, tweet_num=10):
     '''
     Get list of poll ids for a given Twitter user
     Parameters
