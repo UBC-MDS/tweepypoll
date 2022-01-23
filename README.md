@@ -26,28 +26,37 @@ There are a few existing Python packages that have similar functionality for twe
 ```bash
 $ pip install tweepypoll
 ```
+## Dependencies
+
+- python = "^3.9"
+- altair = "^4.2.0"
+- pandas = "^1.3.5"
+- tweepy = "^4.4.0"
+- python-dotenv = "^0.19.2"
 
 ## Usage
 
-```bash
+```Python
 from tweepypoll.tweepypoll import get_poll_by_id
 get_poll_by_id(tweet_id)
 ```
 **tweet_id** is numeric, such as 1481040318325739523
 
 
-```bash
+```Python
 from tweepypoll.tweepypoll import get_polls_from_user
 get_polls_from_user('user_id')
 ```
 where **user_is** is a string username, such as 'tacobell'
 
 
-```bash
+```Python
 from tweepypoll.tweepypoll import visualize_poll
 visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False)
 ```
 **poll_obj** is a dict outputted by get_poll_by_id(), **show_user, show_duration, show_date** are optional booleans to display username, poll duration and poll end date, respectively
+
+<img src="https://raw.githubusercontent.com/UBC-MDS/tweepypoll/main/img/visualize_poll_plot.png" width="600">
 
 ## Contributors
 
