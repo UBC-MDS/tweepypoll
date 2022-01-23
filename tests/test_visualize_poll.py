@@ -49,7 +49,7 @@ def test_visualize_poll():
     # check if show_duration=True, correct duration is printed
     assert sample_poll_obj["duration"] / 60 == 24.0, "Duration is not correct."
 
-    # check if show_total_responses=True, correct total response is printed
+    # check if calculated total votes is equal to the input dict
     df = pd.DataFrame(sample_poll_obj["poll options"])
     assert (
         df["votes"].sum() == sample_poll_obj["total"]
