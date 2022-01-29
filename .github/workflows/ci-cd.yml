@@ -68,10 +68,18 @@ jobs:
     # Step 5. Use PSR to make release
     - name: Python Semantic Release
       run: |
-          pip install python-semantic-release
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          semantic-release publish
+          git config --local user.name github-actions
+          git config --local user.email github-actions@github.com
+          git pull origin main
+          poetry run semantic-release version
+          poetry version
+          git commit --amend -m "[skip actions] Bump new version"
+          git push --tag
+          
+    - name: Push package version changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.ACCESS_TOKEN }}
     
     # Step 6. Enable admin branch protection
     - name: Enable admin branch protection
