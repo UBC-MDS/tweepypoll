@@ -9,83 +9,16 @@ import tweepy
 import os
 import re
 
-def get_poll_by_id(tweet_id):
-    '''
-    Extracts poll data from Twitter given the poll ID
-
-    Parameters
-    ----------
-    tweet_id : str
-        id of the tweet containing twitter poll
-    
-    Returns
-    --------
-    a dictionary with the following keys:
-        poll question,
-        poll responses,
-        total votes,
-        duration,
-        date    
-    
-    Examples
-    --------
-    >>> get_poll_by_id('4235234')
-    '''
-
-    if not(isinstance(tweet_id, int)):
-        raise TypeError('Invalid argument type: poll id must be numeric string.')
-
-   # Twitter API credentials
-    #from dotenv import load_dotenv, find_dotenv
-    #load_dotenv(find_dotenv())
-    #bearer_token = os.environ.get("BEARER_TOKEN")
-     ############################################################################
-    # Note: For the TAs convenience, we hard coded the bearer_token below.
-    # In practice, we would use commented out code to get the token from environmental variable
-    ############################################################################
-    bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
-    
-    client = tweepy.Client(bearer_token=bearer_token)
-
-    res_tweet = client.get_tweets(tweet_id, expansions=["attachments.poll_ids", "author_id"], poll_fields=["duration_minutes","end_datetime"])
-    res = res_tweet.includes
-
-    try:
-        res['polls'][0]
-    except KeyError:
-         raise TypeError('Provided tweet does not contain a poll!')
-
-    poll = res['polls'][0]
-    duration = poll['duration_minutes']
-    date = poll['end_datetime']
-    options = poll['options']
-    text = res_tweet.data[0]['text']
-    user = res['users'][0].username
-
-    total = 0
-    for opt in options:
-        total = total + opt['votes']
-
-    rtn = {
-        "text" : text,
-        "duration" : duration,
-        "date" : date,
-        "poll options" : options,
-        "user" : user,
-        "total" : total
-    }
-
-    return rtn
-
 def get_polls_from_user(username, tweet_num=10):
     '''
-    Get list of poll ids for a given Twitter user
+    Extract tweet ids (where the tweet contains a poll) for a given Twitter user
+    
     Parameters
     ----------
     username : str
-        username of the twitter user
+        username of the Twitter user
     tweet_num: int
-        number of the most recent tweets to be 
+        number of the most recent tweets to be pulled
         default = 10
         maximum = 100, minimum = 5 per request by Twitter API
         
@@ -121,23 +54,92 @@ def get_polls_from_user(username, tweet_num=10):
     for user in users.data:  
         user_id = user.id
 
-    # Get tweets specified by the requested user ID
+    # Get tweets specified by the requested user id
     tweets = client.get_users_tweets(id=user_id, 
                                      max_results=tweet_num,
                                      expansions="attachments.poll_ids")
 
-    # Get poll_ids from tweets if available
-    poll_ids = []
+    # Get tweet_id from tweets that contain polls (if available)
+    tweet_id_with_poll = []
 
     for tweet in tweets.data:
         if "attachments" in tweet.data.keys():
-            attachments = tweet.data['attachments']
-            poll_id = attachments['poll_ids']
-            poll_ids.append(tweet.id)
+            tweet_id_with_poll.append(tweet.id)
         else:
             pass  
     
-    return poll_ids
+    return tweet_id_with_poll
+
+
+def get_poll_by_id(tweet_id):
+    '''
+    Extracts poll data from Twitter given the poll ID
+
+    Parameters
+    ----------
+    tweet_id : str
+        id of the tweet containing twitter poll
+    
+    Returns
+    --------
+    a dictionary with the following keys:
+        poll question,
+        poll responses,
+        total votes,
+        duration,
+        date    
+    
+    Examples
+    --------
+    >>> get_poll_by_id('4235234')
+    '''
+
+    # Check argument validity
+    if not(isinstance(tweet_id, int)):
+        raise TypeError('Invalid argument type: input tweet_id must be numeric string.')
+
+    # Twitter API credentials
+    #from dotenv import load_dotenv, find_dotenv
+    #load_dotenv(find_dotenv())
+    #bearer_token = os.environ.get("BEARER_TOKEN")
+    
+    ############################################################################
+    # Note: For the TAs convenience, we hard coded the bearer_token below.
+    # In practice, we would use commented out code to get the token from environmental variable
+    ############################################################################
+    
+    bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
+    client = tweepy.Client(bearer_token=bearer_token)
+
+    res_tweet = client.get_tweets(tweet_id, expansions=["attachments.poll_ids", "author_id"], poll_fields=["duration_minutes","end_datetime"])
+    res = res_tweet.includes
+
+    try:
+        res['polls'][0]
+    except KeyError:
+         raise TypeError('Provided tweet does not contain a poll!')
+
+    poll = res['polls'][0]
+    duration = poll['duration_minutes']
+    date = poll['end_datetime']
+    options = poll['options']
+    text = res_tweet.data[0]['text']
+    user = res['users'][0].username
+
+    total = 0
+    for opt in options:
+        total = total + opt['votes']
+
+    rtn = {
+        "text" : text,
+        "duration" : duration,
+        "date" : date,
+        "poll options" : options,
+        "user" : user,
+        "total" : total
+    }
+
+    return rtn
 
 
 def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False):
@@ -173,25 +175,27 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
     >>> visualize_poll('4235234', show_duration=True)
 
     '''
+    
     # Check for valid inputs
     if not isinstance(poll_obj, dict):
         raise Exception("The type of the argument 'poll_obj' mush be a dictionary")
     
-    # convert dictionary to pd.DataFrame
+    # Convert dictionary to pd.DataFrame
     df = pd.DataFrame(poll_obj["poll options"])
     
-    # extract user id and print
+    # Extract user id and print
     if show_user == True:
         print(f"The user of the poll: {poll_obj['user']}")
     
-    # extract poll date and print
+    # Extract poll date and print
     if show_date == True: 
         print(f"The end date and time of the poll: {pd.Timestamp(poll_obj['date']).strftime('%Y-%m-%d %H:%M:%S')}") # len()=1
     
-    # extract duration and print
+    # Extract duration and print
     if show_duration == True:
         print(f"The duration of the poll in hours: {poll_obj['duration'] / 60:.1f}h")
     
+    # Create the plot
     plot = alt.Chart(
         df, 
         title=alt.TitleParams(
