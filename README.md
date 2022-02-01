@@ -53,7 +53,7 @@ get_poll_by_id(tweet_id)
 from tweepypoll.tweepypoll import visualize_poll
 visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=False)
 ```
-**poll_obj** is a dict outputted by get_poll_by_id(), **show_user, show_duration, show_date** are optional booleans to display username, poll duration and poll end date, respectively
+**poll_obj** is a list of dicts outputted by get_poll_by_id(), **show_user, show_duration, show_date** are optional booleans to display username, poll duration and poll end date, respectively
 
 <img src="https://raw.githubusercontent.com/UBC-MDS/tweepypoll/main/img/visualize_poll_plot.png" width="600">
 
