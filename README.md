@@ -8,11 +8,12 @@
 
 ## Functions
 
-- `get_poll_by_id`:
-    - This function extracts poll data from Twitter given the poll ID.
-
 - `get_polls_from_user`:
-    - This function retrieves a list of poll IDs from a Twitter user. These ids can be fed into the `get_poll_by_id` and `visualize_poll` functions.
+    - This function retrieves a list of tweet IDs (where the tweet contains a poll) from a Twitter user. These ids can be fed into the `get_poll_by_id` function. 
+    - The function will only search through the most 100 recent tweets per requested user. 
+
+- `get_poll_by_id`:
+    - This function extracts poll information from Twitter given the tweet ID returned from the `get_polls_from_user` function.
 
 - `visualize_poll`:
     - This function takes in the output of `get_poll_by_id` function and visualizes the poll information. 
@@ -37,18 +38,16 @@ $ pip install tweepypoll
 ## Usage
 
 ```Python
+from tweepypoll.tweepypoll import get_polls_from_user
+get_polls_from_user('username')
+```
+where **username** is a string username, such as 'ElonMusk'
+
+```Python
 from tweepypoll.tweepypoll import get_poll_by_id
 get_poll_by_id(tweet_id)
 ```
 **tweet_id** is numeric, such as 1481040318325739523
-
-
-```Python
-from tweepypoll.tweepypoll import get_polls_from_user
-get_polls_from_user('user_id')
-```
-where **user_is** is a string username, such as 'tacobell'
-
 
 ```Python
 from tweepypoll.tweepypoll import visualize_poll
