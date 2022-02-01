@@ -197,22 +197,6 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
         # convert dictionary to pd.DataFrame
         df = pd.DataFrame(poll_obj[i]["poll options"])
 
-        # extract user id and print
-        if show_user == True:
-            print(f"The user of the poll: {poll_obj[i]['user']}")
-
-        # extract poll date and print
-        if show_date == True:
-            print(
-                f"The end date and time of the poll: {pd.Timestamp(poll_obj[i]['date']).strftime('%Y-%m-%d %H:%M:%S %Z')}"
-            )
-
-        # extract duration and print
-        if show_duration == True:
-            print(
-                f"The duration of the poll in hours: {poll_obj[i]['duration'] / 60:.1f}h"
-            )
-
         plot = (
             alt.Chart(
                 df, title=alt.TitleParams(text=poll_obj[i]["text"], anchor="start")
@@ -232,5 +216,22 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
             .properties(height=200, width=400)
         )
         plot.display()
+        
+        # extract user id and print
+        if show_user == True:
+            print(f"The user of the poll: {poll_obj[i]['user']}")
+
+        # extract poll date and print
+        if show_date == True:
+            print(
+                f"The end date and time of the poll: {pd.Timestamp(poll_obj[i]['date']).strftime('%Y-%m-%d %H:%M:%S %Z')}"
+            )
+
+        # extract duration and print
+        if show_duration == True:
+            print(
+                f"The duration of the poll in hours: {poll_obj[i]['duration'] / 60:.1f}h"
+            )
+
         plot_list.append(plot)
     return plot_list
