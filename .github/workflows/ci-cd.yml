@@ -35,6 +35,7 @@ jobs:
     # Step 8. Build documentation
     - name: Build documentation
       run: poetry run make html --directory docs/
+  
   cd:
     # Only run this job if the "ci" job passes
     needs: ci
@@ -42,15 +43,19 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # Step 1. Set up operating system
     runs-on: ubuntu-latest
+    
     steps:
+    
     # Step 2. Set up Python 3.9
     - uses: actions/setup-python@v2
       with:
         python-version: 3.9
+        
     # Step 3. Check-out repository so we can access its contents
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
+    
     # Step 4. Use PSR to make release
     - name: Python Semantic Release
       run: |
@@ -58,6 +63,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           semantic-release publish
+    
     # Step 5. Publish to TestPyPI
     - uses: pypa/gh-action-pypi-publish@release/v1
       with:
@@ -65,6 +71,7 @@ jobs:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
         skip_existing: true
+        
     # Step 6. Test install from TestPyPI
     - name: Test install from TestPyPI
       run: |
@@ -72,6 +79,7 @@ jobs:
           --index-url https://test.pypi.org/simple/ \
           --extra-index-url https://pypi.org/simple \
           tweepypoll
+          
     # Step 7. Publish to PyPI
     - uses: pypa/gh-action-pypi-publish@release/v1
       with:

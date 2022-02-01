@@ -3,7 +3,7 @@ This outlines how to propose a change to the Tweepypoll python package
 
 Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given. If you notice a bug, or have a feature request, please open an issue.
-If you'd like to contribute, you can create a local branch and submit a pull request. Our code maintainers team will review pull requests within 7 days.
+If you'd like to contribute, you can fork from the repository and submit a pull request. Our code maintainers team will review pull requests within 7 days.
 
 
 ## Types of Contributions
