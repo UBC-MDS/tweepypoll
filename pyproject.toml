@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tweepypoll"
-version = "0.2.1"
+version = "0.2.2"
 description = "Collect and visualize twitter poll data."
 authors = ["Wenxin Xiang, Rada Rudyak, Linh Giang Nguyen"]
 license = "MIT"
