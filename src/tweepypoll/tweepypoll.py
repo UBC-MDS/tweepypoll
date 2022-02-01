@@ -184,6 +184,7 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
     --------
     >>> visualize_poll(tweet_polls, show_duration=True)
     """
+    plot_list = []
 
     for i, polls in enumerate(poll_obj):
 
@@ -231,3 +232,5 @@ def visualize_poll(poll_obj, show_user=False, show_duration=False, show_date=Fal
             .properties(height=200, width=400)
         )
         plot.display()
+        plot_list.append(plot)
+    return plot_list
