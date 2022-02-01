@@ -2,6 +2,9 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2022-02-01)
+
+
 ## v0.2.0 (2022-01-29)
 ### Feature
 * Revise visualize_poll based on input dict ([`ea12cd6`](https://github.com/UBC-MDS/tweepypoll/commit/ea12cd60b9722c78f65d7b048d86f26f972d57e2))
