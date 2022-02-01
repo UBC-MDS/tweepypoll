@@ -70,10 +70,9 @@ def get_polls_from_user(username, tweet_num=10):
     
     return tweet_id_with_poll
 
-
-def get_poll_by_id(tweet_id):
+def get_poll_by_id(tweet_ids):
     """
-    Extracts poll data from Twitter given the poll ID
+    Extracts poll data from Twitter given the poll IDs array
 
     Parameters
     ----------
@@ -91,12 +90,12 @@ def get_poll_by_id(tweet_id):
 
     Examples
     --------
-    >>> get_poll_by_id('4235234')
+    >>> get_poll_by_id(['1484375486473986049','1484375486473986049'])
     """
 
     # Check argument validity
-    if not(isinstance(tweet_id, int)):
-        raise TypeError('Invalid argument type: input tweet_id must be numeric string.')
+    if not(isinstance(tweet_ids, list)):
+        raise TypeError('Invalid argument type: input tweet_id must be a list of numeric IDs.')
 
     # Twitter API credentials
     #from dotenv import load_dotenv, find_dotenv
@@ -111,37 +110,43 @@ def get_poll_by_id(tweet_id):
     bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAyIYQEAAAAAjvBdCMMh1dT8clkpXhHxzld7Dhs%3DLPl5zMXXOZqznZGe9JP7zHj3Wzx0N4unogLcWl8wfIkwikjQKm'
     client = tweepy.Client(bearer_token=bearer_token)
 
-    res_tweet = client.get_tweets(
-        tweet_id,
-        expansions=["attachments.poll_ids", "author_id"],
-        poll_fields=["duration_minutes", "end_datetime"],
-    )
-    res = res_tweet.includes
+    rtn = []
 
-    try:
-        res["polls"][0]
-    except KeyError:
-        raise TypeError("Provided tweet does not contain a poll!")
+    for tweet_id in tweet_ids:
 
-    poll = res["polls"][0]
-    duration = poll["duration_minutes"]
-    date = poll["end_datetime"]
-    options = poll["options"]
-    text = res_tweet.data[0]["text"]
-    user = res["users"][0].username
+        res_tweet = client.get_tweets(
+            tweet_id,
+            expansions=["attachments.poll_ids", "author_id"],
+            poll_fields=["duration_minutes", "end_datetime"],
+        )
+        res = res_tweet.includes
 
-    total = 0
-    for opt in options:
-        total = total + opt["votes"]
+        try:
+            res["polls"][0]
+        except KeyError:
+            raise TypeError("Provided tweet does not contain a poll!")
 
-    rtn = {
-        "text": text,
-        "duration": duration,
-        "date": date,
-        "poll options": options,
-        "user": user,
-        "total": total,
-    }
+        poll = res["polls"][0]
+        duration = poll["duration_minutes"]
+        date = poll["end_datetime"]
+        options = poll["options"]
+        text = res_tweet.data[0]["text"]
+        user = res["users"][0].username
+
+        total = 0
+        for opt in options:
+            total = total + opt["votes"]
+
+        tweet_data = {
+            "text": text,
+            "duration": duration,
+            "date": date,
+            "poll options": options,
+            "user": user,
+            "total": total,
+        }
+
+        rtn.append(tweet_data)
 
     return rtn
 
