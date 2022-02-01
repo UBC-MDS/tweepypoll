@@ -29,10 +29,10 @@ def test_visualize_poll():
         test_plot[0], alt.Chart
     ), "The type of the output mush be a altair chart"
     assert (
-        test_plot[0].encoding.x.field == "votes"
+        test_plot[0].encoding.x.shorthand == "votes"
     ), "The votes should be mapped to the x axis"
     assert (
-        test_plot[0].encoding.y.field == "label"
+        test_plot[0].encoding.y.shorthand == "label"
     ), "The label should be mapped to the y axis"
     assert test_plot[0].mark == "bar", "mark should be a bar"
     assert (
