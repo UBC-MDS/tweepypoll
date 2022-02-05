@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.0 (2022-02-05)
+### Feature
+* Edit function visualize_poll ([`0fe8896`](https://github.com/UBC-MDS/tweepypoll/commit/0fe8896db3b210ef51dec6a17c10819d65a74651))
+* Edit function visualize_poll ([`74ee90f`](https://github.com/UBC-MDS/tweepypoll/commit/74ee90f2d1b6266c12e1bbfe01b0135fc9f1a588))
+
 ## v0.2.3 (2022-02-01)
 
 
